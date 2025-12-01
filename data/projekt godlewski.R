@@ -4,6 +4,7 @@ library(ggplot2)
 library(scales)
 library(tidyverse)
 
+#Przewalutowanie
 Car_sale_ads_cleaned_drive_transmission_imputed <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
   mutate(
     PricePLN = ifelse(
@@ -70,7 +71,7 @@ ggplot(df_bins, aes(x = Price_bin, y = N, fill = percent)) +
   geom_text(aes(label = percent_label), vjust = -0.5, size = 4) +
   scale_fill_gradient(low = "#6baed6", high = "#08306b", name = "Udział %", labels = scales::percent) +
   labs(
-    title = "Liczba ogłoszeń ze względu na cenę",
+    title = "Liczba ogłoszeń ze względu na cenę (PLN)",
     x = "Przedział cenowy",
     y = "Liczba ogłoszeń"
   ) +

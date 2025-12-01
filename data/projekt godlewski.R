@@ -29,3 +29,4 @@ ggplot(df_brand, aes(x = reorder(Vehicle_brand, n), y = n, fill = n)) +
     legend.position = "none"
   ) +
   expand_limits(y = max(df_brand$n) * 1.15)
+#test

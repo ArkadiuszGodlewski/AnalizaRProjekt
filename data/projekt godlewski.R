@@ -81,3 +81,4 @@ ggplot(df_bins, aes(x = Price_bin, y = N, fill = percent)) +
     legend.position = "right",
     axis.text.x = element_text(angle = 45, hjust = 1)
   )
+#test arek

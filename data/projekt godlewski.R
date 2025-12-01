@@ -1,4 +1,5 @@
 #START
+library(dplyr)
 library(ggplot2)
 library(scales)
 library(tidyverse)
@@ -29,4 +30,41 @@ ggplot(df_brand, aes(x = reorder(Vehicle_brand, n), y = n, fill = n)) +
     legend.position = "none"
   ) +
   expand_limits(y = max(df_brand$n) * 1.15)
-#test
+
+df_bins <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  mutate(
+    Price_trimmed = ifelse(Price > 200000, 200001, Price),
+    Price_bin = cut(
+      Price_trimmed,
+      breaks = c(seq(0, 200000, by = 20000), Inf),
+      labels = c(
+        "0–20k", "20–40k", "40–60k", "60–80k", "80–100k",
+        "100–120k", "120–140k", "140–160k", "160–180k", "180–200k", ">200k"
+      ),
+      include.lowest = TRUE,
+      right = FALSE
+    )
+  ) %>%
+  group_by(Price_bin) %>%
+  summarise(N = n()) %>%
+  mutate(
+    percent = N / sum(N),
+    percent_label = paste0(round(percent * 100, 1), "%")
+  )
+
+# Wykres
+ggplot(df_bins, aes(x = Price_bin, y = N, fill = percent)) +
+  geom_col() +
+  geom_text(aes(label = percent_label), vjust = -0.5, size = 4) +
+  scale_fill_gradient(low = "#6baed6", high = "#08306b", name = "Udział %", labels = scales::percent) +
+  labs(
+    title = "Liczba ogłoszeń ze względu na cenę",
+    x = "Przedział cenowy",
+    y = "Liczba ogłoszeń"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "right",
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )

@@ -3,6 +3,18 @@ library(dplyr)
 library(ggplot2)
 library(scales)
 library(tidyverse)
+
+Car_sale_ads_cleaned_drive_transmission_imputed <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  mutate(
+    PricePLN = ifelse(
+      Currency == "PLN",
+      Price,
+      round(Price * 4.23)
+    )
+  )
+Car_sale_ads_cleaned_drive_transmission_imputed <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  relocate(PricePLN, .after = Price)
+
 df_brand <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
   count(Vehicle_brand, name = "n") %>%
   mutate(perc = n / sum(n)) %>%
@@ -33,7 +45,7 @@ ggplot(df_brand, aes(x = reorder(Vehicle_brand, n), y = n, fill = n)) +
 
 df_bins <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
   mutate(
-    Price_trimmed = ifelse(Price > 200000, 200001, Price),
+    Price_trimmed = ifelse(PricePLN > 200000, 200001, PricePLN),
     Price_bin = cut(
       Price_trimmed,
       breaks = c(seq(0, 200000, by = 20000), Inf),

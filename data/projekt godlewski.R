@@ -3,6 +3,7 @@ library(dplyr)
 library(ggplot2)
 library(scales)
 library(tidyverse)
+library(ggstatsplot)
 
 #Przewalutowanie
 Car_sale_ads_cleaned_drive_transmission_imputed <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
@@ -81,4 +82,34 @@ ggplot(df_bins, aes(x = Price_bin, y = N, fill = percent)) +
     legend.position = "right",
     axis.text.x = element_text(angle = 45, hjust = 1)
   )
-#test arek
+
+#Mediana
+Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  filter(Vehicle_brand %in% c("Suzuki","Honda"))%>%
+  ggbetweenstats(
+    x=Vehicle_brand,
+    y=PricePLN,
+    xlab="Marka",
+    ylab="Cena",
+    bf.message = FALSE
+  ) +
+  scale_y_continuous(
+    labels = function(x) format(x, big.mark = " ", scientific = FALSE)
+  )
+
+#Próba
+set.seed(123)
+
+Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  filter(Vehicle_brand %in% c("Suzuki", "Honda")) %>%
+  slice_sample(n = 3000) %>%
+  ggbetweenstats(
+    x = Vehicle_brand,
+    y = PricePLN,
+    xlab="Marka",
+    ylab="Cena",
+    bf.message = FALSE
+  ) +
+  scale_y_continuous(
+    labels = function(x) format(x, big.mark = " ", scientific = FALSE)
+  )

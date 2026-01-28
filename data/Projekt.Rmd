@@ -9,6 +9,7 @@ library(ggplot2)
 library(scales)
 library(tidyverse)
 library(ggstatsplot)
+
 ```
 
 ```{r}
@@ -131,6 +132,56 @@ Car_sale_ads_cleaned_drive_transmission_imputed %>%
   ) +
   scale_y_continuous(
     labels = function(x) format(x, big.mark = " ", scientific = FALSE)
+  ) +
+  labs(
+    title = "Rozkład cen najpopularniejszych samochodów marek japońskich",
+    subtitle = "Porównanie cen ofert sprzedaży marek Suzuki i Honda",
+    caption = "Wykres przedstawia rozrzut cen (PLN) dla 3000 losowo wybranych ogłoszeń"
   )
 ```
+```{r}
+#Próba
+set.seed(223)
 
+Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  filter(Vehicle_brand %in% c("BMW", "Audi", "Volkswagen")) %>%
+  slice_sample(n = 3000) %>%
+  ggbetweenstats(
+    x = Vehicle_brand,
+    y = PricePLN,
+    xlab="Marka",
+    ylab="Cena",
+    bf.message = FALSE
+  ) +
+  scale_y_continuous(
+    labels = function(x) format(x, big.mark = " ", scientific = FALSE)
+  ) +
+  labs(
+    title = "Rozkład cen najpopularniejszych samochodów marek niemieckich",
+    subtitle = "Porównanie cen ofert sprzedaży marek BMW, Audi oraz Volkswagen",
+    caption = "Wykres przedstawia rozrzut cen (PLN) dla 3000 losowo wybranych ogłoszeń"
+  )
+```
+```{r}
+#Próba
+set.seed(123)
+
+Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  filter(Vehicle_brand %in% c("Ferrari", "Lamborghini")) %>%
+  slice_sample(n = 3000) %>%
+  ggbetweenstats(
+    x = Vehicle_brand,
+    y = PricePLN,
+    xlab="Marka",
+    ylab="Cena",
+    bf.message = FALSE
+  ) +
+  scale_y_continuous(
+    labels = function(x) format(x, big.mark = " ", scientific = FALSE)
+  ) +
+  labs(
+    title = "Rozkład cen najpopularniejszych samochodów marek włoskich",
+    subtitle = "Porównanie cen ofert sprzedaży marek Ferrari i Lamborghini",
+    caption = "Wykres przedstawia rozrzut cen (PLN) dla wszystkich ogłoszeń z badanego okresu"
+  )
+```

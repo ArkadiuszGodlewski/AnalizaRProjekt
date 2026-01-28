@@ -434,3 +434,68 @@ pie_plot(
   "Struktura ogłoszeń według napędu"
 )
 ```
+
+```{r}
+# Przygotowanie danych
+dane <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  select(Power_HP, PricePLN) %>%
+  drop_na() %>%
+  filter(
+    between(
+      PricePLN,
+      quantile(PricePLN, 0.01),
+      quantile(PricePLN, 0.85)
+    ),
+    between(
+      Power_HP,
+      quantile(Power_HP, 0.01),
+      quantile(Power_HP, 0.99)
+    )
+  )
+
+
+# Wykres: cena vs moc silnika (bez obserwacji skrajnych)
+ggplot(dane, aes(x = Power_HP, y = PricePLN)) +
+  geom_hex(bins = 45) +
+  geom_smooth(
+    method = "lm",
+    se = FALSE,
+    color = "black",
+    linewidth = 0.8
+  ) +
+  scale_fill_stepsn(
+    colours = c(
+      "#c6dbef",  # < 100  (jasny, ale widoczny)
+      "#9ecae1",  # 100–499
+      "#6baed6",  # 500–999
+      "#4292c6",  # 1000–1999
+      "#2171b5",  # 2000–4999
+      "#084594"   # ≥ 5000 (bardzo wysoka gęstość)
+    ),
+    breaks = c(1, 100, 500, 1000, 2000, 5000),
+    labels = c(
+      "< 100",
+      "100–499",
+      "500–999",
+      "1000–1999",
+      "2000–4999",
+      "≥ 5000"
+    ),
+    name = "Liczba ogłoszeń"
+  ) +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Zależność ceny samochodu od mocy silnika",
+    x = "Moc silnika (KM)",
+    y = "Cena pojazdu (PLN)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank(),
+    legend.position = "right"
+  )
+
+
+
+```

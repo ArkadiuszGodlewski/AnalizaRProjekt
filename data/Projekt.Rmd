@@ -1,0 +1,136 @@
+---
+title: "Projekt"
+output: html_document
+---
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(tidyverse)
+library(ggstatsplot)
+```
+
+```{r}
+#Przewalutowanie
+Car_sale_ads_cleaned_drive_transmission_imputed <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  mutate(
+    PricePLN = ifelse(
+      Currency == "PLN",
+      Price,
+      round(Price * 4.23)
+    )
+  )
+Car_sale_ads_cleaned_drive_transmission_imputed <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  relocate(PricePLN, .after = Price)
+```
+
+```{r}
+df_brand <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  count(Vehicle_brand, name = "n") %>%
+  mutate(perc = n / sum(n)) %>%
+  arrange(desc(n)) %>%
+  slice_head(n = 20)
+```
+
+```{r}
+ggplot(df_brand, aes(x = reorder(Vehicle_brand, n), y = n, fill = n)) +
+  geom_col() +
+  geom_text(aes(label = paste0(round(perc * 100, 1), "%")),
+            hjust = -0.1, size = 4.5, fontface = "bold") +
+  coord_flip() +
+  scale_fill_gradient(low = "#6ECFF6", high = "#005B96") +
+  labs(
+    title = "TOP 20 najpopularniejszych marek samochodów",
+    subtitle = "Z procentowym udziałem w całej bazie ogłoszeń",
+    x = "Marka pojazdu",
+    y = "Liczba modeli",
+    fill = "Liczba"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(size = 18, face = "bold"),
+    plot.subtitle = element_text(size = 13),
+    axis.text.y = element_text(size = 11),
+    legend.position = "none"
+  ) +
+  expand_limits(y = max(df_brand$n) * 1.15)
+```
+
+```{r}
+df_bins <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  mutate(
+    Price_trimmed = ifelse(PricePLN > 200000, 200001, PricePLN),
+    Price_bin = cut(
+      Price_trimmed,
+      breaks = c(seq(0, 200000, by = 20000), Inf),
+      labels = c(
+        "0–20k", "20–40k", "40–60k", "60–80k", "80–100k",
+        "100–120k", "120–140k", "140–160k", "160–180k", "180–200k", ">200k"
+      ),
+      include.lowest = TRUE,
+      right = FALSE
+    )
+  ) %>%
+  group_by(Price_bin) %>%
+  summarise(N = n()) %>%
+  mutate(
+    percent = N / sum(N),
+    percent_label = paste0(round(percent * 100, 1), "%")
+  )
+```
+
+```{r}
+# Wykres
+ggplot(df_bins, aes(x = Price_bin, y = N, fill = percent)) +
+  geom_col() +
+  geom_text(aes(label = percent_label), vjust = -0.5, size = 4) +
+  scale_fill_gradient(low = "#6baed6", high = "#08306b", name = "Udział %", labels = scales::percent) +
+  labs(
+    title = "Liczba ogłoszeń ze względu na cenę (PLN)",
+    x = "Przedział cenowy",
+    y = "Liczba ogłoszeń"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "right",
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
+```{r}
+#Mediana
+Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  filter(Vehicle_brand %in% c("Suzuki","Honda"))%>%
+  ggbetweenstats(
+    x=Vehicle_brand,
+    y=PricePLN,
+    xlab="Marka",
+    ylab="Cena",
+    bf.message = FALSE
+  ) +
+  scale_y_continuous(
+    labels = function(x) format(x, big.mark = " ", scientific = FALSE)
+  )
+```
+
+```{r}
+#Próba
+set.seed(123)
+
+Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  filter(Vehicle_brand %in% c("Suzuki", "Honda")) %>%
+  slice_sample(n = 3000) %>%
+  ggbetweenstats(
+    x = Vehicle_brand,
+    y = PricePLN,
+    xlab="Marka",
+    ylab="Cena",
+    bf.message = FALSE
+  ) +
+  scale_y_continuous(
+    labels = function(x) format(x, big.mark = " ", scientific = FALSE)
+  )
+```
+

@@ -9,6 +9,7 @@ library(ggplot2)
 library(scales)
 library(tidyverse)
 library(ggstatsplot)
+library(hexbin)
 
 ```
 

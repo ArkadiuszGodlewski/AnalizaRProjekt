@@ -59,6 +59,39 @@ ggplot(df_brand, aes(x = reorder(Vehicle_brand, n), y = n, fill = n)) +
 ```
 
 ```{r}
+df_model <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  unite("Brand_Model", Vehicle_brand, Vehicle_model, sep = " ", remove = FALSE) %>%
+  count(Brand_Model, name = "n") %>%
+  mutate(perc = n / sum(n)) %>%
+  arrange(desc(n)) %>%
+  slice_head(n = 20)
+```
+
+```{r}
+ggplot(df_model, aes(x = reorder(Brand_Model, n), y = n, fill = n)) +
+  geom_col() +
+  geom_text(aes(label = paste0(round(perc * 100, 1), "%")),
+            hjust = -0.1, size = 4.5, fontface = "bold") +
+  coord_flip() +
+  scale_fill_gradient(low = "#6ECFF6", high = "#005B96") +
+  labs(
+    title = "TOP 20 najpopularniejszych modeli samochodów",
+    subtitle = "Z procentowym udziałem w całej bazie ogłoszeń",
+    x = "Model pojazdu",
+    y = "Liczba ogłoszeń",
+    fill = "Liczba"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(size = 18, face = "bold"),
+    plot.subtitle = element_text(size = 13),
+    axis.text.y = element_text(size = 11),
+    legend.position = "none"
+  ) +
+  expand_limits(y = max(df_model$n) * 1.15)
+```
+
+```{r}
 df_bins <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
   mutate(
     Price_trimmed = ifelse(PricePLN > 200000, 200001, PricePLN),
@@ -499,3 +532,116 @@ ggplot(dane, aes(x = Power_HP, y = PricePLN)) +
 
 
 ```
+
+
+```{r}
+df_power_bins <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  mutate(
+    Power_trimmed = ifelse(Power_HP > 500, 501, Power_HP),  # obetnij skrajne wartości
+    Power_bin = cut(
+      Power_trimmed,
+      breaks = c(seq(0, 500, by = 50), Inf),  # przedziały co 50 KM
+      labels = c(
+        "0–50", "50–100", "100–150", "150–200", "200–250",
+        "250–300", "300–350", "350–400", "400–450", "450–500", ">500"
+      ),
+      include.lowest = TRUE,
+      right = FALSE
+    )
+  ) %>%
+  group_by(Power_bin) %>%
+  summarise(N = n()) %>%
+  mutate(
+    percent = N / sum(N),
+    percent_label = paste0(round(percent * 100, 1), "%")
+  )
+```
+
+```{r}
+ggplot(df_power_bins, aes(x = Power_bin, y = N, fill = percent)) +
+  geom_col() +
+  geom_text(aes(label = percent_label), vjust = -0.5, size = 4) +
+  scale_fill_gradient(low = "#6baed6", high = "#08306b", name = "Udział %", labels = scales::percent) +
+  labs(
+    title = "Liczba ogłoszeń ze względu na moc silnika (KM)",
+    x = "Przedział mocy",
+    y = "Liczba ogłoszeń"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "right",
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
+```{r}
+df_colour <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  mutate(Colour = tolower(Colour)) %>%  # ujednolicenie
+  count(Colour, name = "n") %>%
+  mutate(
+    perc = n / sum(n),
+    Colour_PL = case_when(
+      Colour == "white" ~ "Biały",
+      Colour == "black" ~ "Czarny",
+      Colour == "silver" ~ "Srebrny",
+      Colour == "gray" ~ "Szary",
+      Colour == "blue" ~ "Niebieski",
+      Colour == "red" ~ "Czerwony",
+      Colour == "brown" ~ "Brązowy",
+      Colour == "green" ~ "Zielony",
+      Colour == "burgundy" ~ "Bordowy",
+      Colour == "golden" ~ "Złoty",
+      Colour == "beige" ~ "Beżowy",
+      Colour == "yellow" ~ "Żółty",
+      Colour == "violet" ~ "Fioletowy",
+      TRUE ~ "Inny"
+    )
+  ) %>%
+  arrange(desc(n)) %>%
+  slice_head(n = 20)
+```
+
+```{r}
+color_map <- c(
+  "Biały" = "#FFFFFF",
+  "Czarny" = "#000000",
+  "Srebrny" = "#C0C0C0",
+  "Szary" = "#808080",
+  "Niebieski" = "#1F75FE",
+  "Czerwony" = "#FF0000",
+  "Brązowy" = "#8B4513",
+  "Zielony" = "#228B22",
+  "Bordowy" = "#800020",
+  "Złoty" = "#FFD700",
+  "Beżowy" = "#F5F5DC",
+  "Żółty" = "#FFFF00",
+  "Fioletowy" = "#8A2BE2",
+  "Inny" = "#D0E4FF"  
+)
+```
+
+```{r}
+ggplot(df_colour, aes(x = reorder(Colour_PL, n), y = n, fill = Colour_PL)) +
+  geom_col(color = ifelse(df_colour$Colour_PL == "Biały", "black", NA)) + # obramówka dla białego
+  geom_text(aes(label = paste0(round(perc * 100, 1), "%")),
+            hjust = -0.1, size = 4.5, fontface = "bold") +
+  coord_flip() +
+  scale_fill_manual(values = color_map) +
+  labs(
+    title = "Najpopularniejsze kolory samochodów",
+    subtitle = "Z procentowym udziałem w całej bazie ogłoszeń",
+    x = "Kolor pojazdu",
+    y = "Liczba modeli",
+    fill = "Kolor"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(size = 18, face = "bold"),
+    plot.subtitle = element_text(size = 13),
+    axis.text.y = element_text(size = 11),
+    legend.position = "none"
+  ) +
+  expand_limits(y = max(df_colour$n) * 1.15)
+```
+

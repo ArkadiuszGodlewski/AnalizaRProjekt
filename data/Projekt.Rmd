@@ -185,3 +185,252 @@ Car_sale_ads_cleaned_drive_transmission_imputed %>%
     caption = "Wykres przedstawia rozrzut cen (PLN) dla wszystkich ogłoszeń z badanego okresu"
   )
 ```
+
+```{r}
+df_type <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  count(Type, name = "n") %>%
+  mutate(perc = n / sum(n)) %>%
+  arrange(desc(n)) %>%
+  slice_head(n = 20)
+
+type_labels <- c(
+  SUV = "SUV",
+  station_wagon = "Kombi",
+  sedan = "Sedan",
+  compact = "Kompakt",
+  city_cars = "Samochód miejski",
+  minivan = "Minivan",
+  coupe = "Coupe",
+  small_cars = "Mały samochód",
+  convertible = "Kabriolet"
+)
+```
+
+```{r}
+ggplot(df_type, aes(x = reorder(Type, n), y = n, fill = n)) +
+  geom_col() +
+  geom_text(
+    aes(label = paste0(round(perc * 100, 1), "%")),
+    hjust = -0.1,
+    size = 4.5,
+    fontface = "bold"
+  ) +
+  coord_flip() +
+  scale_x_discrete(labels = type_labels) +
+  scale_fill_gradient(low = "#6ECFF6", high = "#005B96") +
+  labs(
+    title = "Najpopularniejsze typy samochodów",
+    subtitle = "Z procentowym udziałem w całej bazie ogłoszeń",
+    x = "Typ pojazdu",
+    y = "Liczba ogłoszeń"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(size = 18, face = "bold"),
+    plot.subtitle = element_text(size = 13),
+    axis.text.y = element_text(size = 11),
+    legend.position = "none"
+  ) +
+  expand_limits(y = max(df_type$n) * 1.15)
+```
+```{r}
+df_condition <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  filter(Condition %in% c("New", "Used")) %>%
+  group_by(Condition) %>%
+  summarise(N = n(), .groups = "drop") %>%
+  mutate(
+    percent = N / sum(N),
+    percent_label = paste0(round(percent * 100, 1), "%")
+  )
+```
+
+```{r}
+ggplot(df_condition, aes(x = "", y = N, fill = Condition)) +
+  geom_col(width = 1, color = "white") +
+  coord_polar(theta = "y") +
+  geom_text(
+    aes(label = percent_label),
+    position = position_stack(vjust = 0.5),
+    size = 5,
+    fontface = "bold",
+    color = "white"
+  ) +
+  scale_fill_manual(
+    values = c(
+      "New"  = "#6baed6",
+      "Used" = "#08306b"
+    ),
+    labels = c(
+      "New"  = "Nowe",
+      "Used" = "Używane"
+    )
+  ) +
+  labs(
+    title = "Struktura ogłoszeń według stanu pojazdu",
+    subtitle = "Podział na samochody nowe i używane",
+    fill = "Stan pojazdu"
+  ) +
+  theme_void(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "right"
+  )
+```
+
+```{r}
+df_mileage_bins <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  filter(Condition != "New") %>%   # tylko używane
+  mutate(
+    Mileage_trimmed = ifelse(Mileage_km > 300000, 300001, Mileage_km),
+    Mileage_bin = cut(
+      Mileage_trimmed,
+      breaks = c(seq(0, 300000, by = 50000), Inf),
+      labels = c(
+        "0–50k", "50–100k", "100–150k", "150–200k",
+        "200–250k", "250–300k", ">300k"
+      ),
+      include.lowest = TRUE,
+      right = FALSE
+    )
+  ) %>%
+  group_by(Mileage_bin) %>%
+  summarise(N = n(), .groups = "drop") %>%
+  mutate(
+    percent = N / sum(N),
+    percent_label = paste0(round(percent * 100, 1), "%")
+  )
+```
+
+```{r}
+ggplot(df_mileage_bins, aes(x = Mileage_bin, y = N, fill = percent)) +
+  geom_col() +
+  geom_text(
+    aes(label = percent_label),
+    vjust = -0.5,
+    size = 4
+  ) +
+  scale_fill_gradient(
+    low = "#6baed6",
+    high = "#08306b",
+    name = "Udział %",
+    labels = scales::percent
+  ) +
+  labs(
+    title = "Liczba ogłoszeń ze względu na przebieg (tylko samochody używane)",
+    x = "Przebieg (km)",
+    y = "Liczba ogłoszeń"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "right",
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
+```{r}
+df_drive_clean <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  mutate(
+    Drive_clean = case_when(
+      grepl("^4x4", Drive, ignore.case = TRUE) ~ "4x4",
+      Drive %in% c("AWD", "All-wheel drive")   ~ "4x4",
+      TRUE                                    ~ Drive
+    ),
+    Drive_clean = fct_recode(
+      Drive_clean,
+      "4x4" = "4x4",
+      "Przednia oś" = "Front wheels",
+      "Tylna oś" = "Rear wheels"
+    )
+  )
+```
+
+```{r}
+blue_palette_dark <- c(
+  "#08306b",
+  "#6baed6",
+  "#2171b5"
+)
+```
+
+```{r}
+pie_plot <- function(data, var, title, legend_title = "") {
+  
+  df <- data %>%
+    count({{ var }}) %>%
+    mutate(
+      percent = n / sum(n),
+      percent_label = paste0(round(percent * 100, 1), "%")
+    )
+  
+  ggplot(df, aes(x = "", y = n, fill = {{ var }})) +
+    geom_col(width = 1, color = "white") +
+    coord_polar(theta = "y") +
+    geom_text(
+      aes(label = percent_label),
+      position = position_stack(vjust = 0.5),
+      color = "white",
+      fontface = "bold",
+      size = 4.5
+    ) +
+    scale_fill_manual(
+      values = blue_palette_dark,
+      name = legend_title
+    ) +
+    labs(title = title) +
+    theme_void(base_size = 14) +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      legend.position = "right"
+    )
+}
+```
+
+```{r}
+df_fuel_grouped <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  mutate(
+    Fuel_grouped = factor(ifelse(Fuel_type %in% c("Diesel", "Gasoline"), Fuel_type, "Inne")),
+    Fuel_grouped = forcats::fct_recode(
+      Fuel_grouped,
+      "Diesel" = "Diesel",
+      "Benzyna" = "Gasoline",
+      "Inne" = "Inne"
+    )
+  )
+```
+
+```{r}
+pie_plot(
+  df_fuel_grouped,
+  Fuel_grouped,
+  "Struktura ogłoszeń według rodzaju paliwa"
+)
+```
+
+```{r}
+df_transmission <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  mutate(
+    Transmission = forcats::fct_recode(
+      Transmission,
+      "Automatyczna" = "Automatic",
+      "Manualna" = "Manual"
+    )
+  )
+```
+
+```{r}
+pie_plot(
+  df_transmission,
+  Transmission,
+  "Struktura ogłoszeń według skrzyni biegów"
+)
+```
+
+```{r}
+pie_plot(
+  df_drive_clean,
+  Drive_clean,
+  "Struktura ogłoszeń według napędu"
+)
+```

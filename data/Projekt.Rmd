@@ -739,3 +739,4 @@ Car_sale_ads_cleaned_drive_transmission_imputed <- Car_sale_ads_cleaned_drive_tr
 wilcox.test(PricePLN ~ Condition, data = Car_sale_ads_cleaned_drive_transmission_imputed)
 wilcox_effsize(Car_sale_ads_cleaned_drive_transmission_imputed, PricePLN ~ Condition)
 ```
+

@@ -10,7 +10,10 @@ library(scales)
 library(tidyverse)
 library(ggstatsplot)
 library(hexbin)
-
+library(car)
+library(rstatix)
+library(ggpubr)
+library(coin)
 ```
 
 ```{r}
@@ -714,4 +717,25 @@ ggplot(
   expand_limits(y = max(price_comparison$price_diff_pct) * 1.15)
 
 
+```
+
+```{r}
+Car_sale_ads_cleaned_drive_transmission_imputed <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  mutate(
+    Condition = factor(Condition),
+    Vehicle_brand = factor(Vehicle_brand),
+    Vehicle_model = factor(Vehicle_model),
+    Fuel_type = factor(Fuel_type),
+    Drive = factor(Drive),
+    Transmission = factor(Transmission),
+    Type = factor(Type),
+    Doors_number = factor(Doors_number),
+    Colour = factor(Colour)
+  )
+```
+
+```{r}
+# nowe/używane różnica ceny
+wilcox.test(PricePLN ~ Condition, data = Car_sale_ads_cleaned_drive_transmission_imputed)
+wilcox_effsize(Car_sale_ads_cleaned_drive_transmission_imputed, PricePLN ~ Condition)
 ```

@@ -646,3 +646,72 @@ ggplot(df_colour, aes(x = reorder(Colour_PL, n), y = n, fill = Colour_PL)) +
   expand_limits(y = max(df_colour$n) * 1.15)
 ```
 
+```{r}
+# Procentowy spadek cen: nowe vs używane
+# Wybrane popularne modele samochodów
+
+# 1. Filtrowanie danych
+models_selected <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  filter(
+    (Vehicle_brand == "Opel" & Vehicle_model == "Astra") |
+    (Vehicle_brand == "Audi" & Vehicle_model == "A4") |
+    (Vehicle_brand == "BMW" & Vehicle_model == "Seria 3") |
+    (Vehicle_brand == "Volkswagen" & Vehicle_model == "Golf") |
+    (Vehicle_brand == "Volkswagen" & Vehicle_model == "Passat")
+  ) %>%
+  filter(Condition %in% c("New", "Used")) %>%
+  mutate(
+    Model_full = paste(Vehicle_brand, Vehicle_model)
+  )
+
+# 2. Mediany cen + procentowy spadek
+price_comparison <- models_selected %>%
+  group_by(Model_full, Condition) %>%
+  summarise(
+    median_price = median(PricePLN, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  tidyr::pivot_wider(
+    names_from = Condition,
+    values_from = median_price
+  ) %>%
+  mutate(
+    price_diff = New - Used,
+    price_diff_pct = round((price_diff / New) * 100, 1)
+  )
+
+# 3. Wykres: różne odcienie w zależności od % spadku
+ggplot(
+  price_comparison,
+  aes(
+    x = reorder(Model_full, price_diff_pct),
+    y = price_diff_pct,
+    fill = price_diff_pct
+  )
+) +
+  geom_col() +
+  geom_text(
+    aes(label = paste0(price_diff_pct, "%")),
+    hjust = -0.1,
+    size = 4
+  ) +
+  coord_flip() +
+  scale_fill_gradient(
+    low = "#c6dbef",
+    high = "#08306b"
+  ) +
+  labs(
+    title = "Procentowa różnica cen pomiędzy samochodami nowymi i używanymi",
+    subtitle = "Pięć najpopularniejszych modeli samochodów",
+    x = "Model pojazdu",
+    y = "Używane modele tańsze względem nowych modeli (%)",
+    fill = "Spadek ceny (%)"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom"
+  ) +
+  expand_limits(y = max(price_comparison$price_diff_pct) * 1.15)
+
+
+```

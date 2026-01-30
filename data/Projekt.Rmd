@@ -739,3 +739,69 @@ Car_sale_ads_cleaned_drive_transmission_imputed <- Car_sale_ads_cleaned_drive_tr
 wilcox.test(PricePLN ~ Condition, data = Car_sale_ads_cleaned_drive_transmission_imputed)
 wilcox_effsize(Car_sale_ads_cleaned_drive_transmission_imputed, PricePLN ~ Condition)
 ```
+
+```{r}
+nonparametric_test <- function(data, response, group) {
+  
+  formula <- as.formula(paste(response, "~", group))
+  k <- nlevels(data[[group]])
+  
+  cat("\n=====================================\n")
+  cat("ZMIENNA:", group, "\n")
+  cat("LICZBA POZIOMÓW:", k, "\n")
+  cat("=====================================\n\n")
+  
+  # 2 grupy → Wilcoxon
+  if (k == 2) {
+    test <- wilcox.test(formula, data = data)
+    print(test)
+    
+    eff <- wilcox_effsize(data, formula)
+    print(eff)
+    
+  } 
+  
+  # >= 3 grupy → Kruskal + Dunn
+  else if (k > 2) {
+    kw <- kruskal.test(formula, data = data)
+    print(kw)
+    
+    eff <- kruskal_effsize(data, formula)
+    print(eff)
+    
+    if (kw$p.value < 0.05) {
+      cat("\nPost-hoc Dunn (Bonferroni):\n")
+      dunn <- dunn_test(
+        data = data,
+        formula,
+        p.adjust.method = "bonferroni"
+      )
+      print(dunn)
+    }
+  }
+}
+```
+
+```{r}
+nonparametric_test(Car_sale_ads_cleaned_drive_transmission_imputed, "PricePLN", "Transmission")
+```
+
+```{r}
+nonparametric_test(Car_sale_ads_cleaned_drive_transmission_imputed, "PricePLN", "Condition")
+```
+
+```{r}
+nonparametric_test(Car_sale_ads_cleaned_drive_transmission_imputed, "PricePLN", "Fuel_type")
+```
+
+```{r}
+nonparametric_test(Car_sale_ads_cleaned_drive_transmission_imputed, "PricePLN", "Drive")
+```
+
+```{r}
+nonparametric_test(Car_sale_ads_cleaned_drive_transmission_imputed, "PricePLN", "Type")
+```
+
+```{r}
+nonparametric_test(Car_sale_ads_cleaned_drive_transmission_imputed, "PricePLN", "Colour")
+```

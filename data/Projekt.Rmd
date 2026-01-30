@@ -805,3 +805,33 @@ nonparametric_test(Car_sale_ads_cleaned_drive_transmission_imputed, "PricePLN", 
 ```{r}
 nonparametric_test(Car_sale_ads_cleaned_drive_transmission_imputed, "PricePLN", "Colour")
 ```
+
+```{r}
+cor.test(Car_sale_ads_cleaned_drive_transmission_imputed$PricePLN, Car_sale_ads_cleaned_drive_transmission_imputed$Mileage_km, method = "spearman", exact = FALSE)
+cor.test(Car_sale_ads_cleaned_drive_transmission_imputed$PricePLN, Car_sale_ads_cleaned_drive_transmission_imputed$Power_HP, method = "spearman", exact = FALSE)
+cor.test(Car_sale_ads_cleaned_drive_transmission_imputed$PricePLN, Car_sale_ads_cleaned_drive_transmission_imputed$Displacement_cm3, method = "spearman", exact = FALSE)
+cor.test(Car_sale_ads_cleaned_drive_transmission_imputed$PricePLN, Car_sale_ads_cleaned_drive_transmission_imputed$Production_year, method = "spearman", exact = FALSE)
+```
+
+```{r}
+Car_sale_ads_cleaned_drive_transmission_imputed <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
+  mutate(logPrice = log(PricePLN))
+```
+
+```{r}
+model <- lm(
+  logPrice ~ Production_year + Mileage_km + Power_HP +
+    Fuel_type + Transmission + Condition,
+  data = Car_sale_ads_cleaned_drive_transmission_imputed
+)
+
+summary(model)
+```
+
+```{r}
+par(mfrow = c(2,2))
+plot(model)
+par(mfrow = c(1,1))
+vif(model)
+```
+

@@ -739,12 +739,19 @@ Car_sale_ads_cleaned_drive_transmission_imputed <- Car_sale_ads_cleaned_drive_tr
 ```
 
 ## Analiza statystyczna różnic cen: Samochody nowe a używane
+
 Celem poniższego testu było zweryfikowanie hipotezy o istotnej różnicy w rozkładzie cen między samochodami nowymi a używanymi. Ze względu na silną asymetrię cen (obecność bardzo drogich aut luksusowych, które zawyżają średnią), zamiast testu t-Studenta zastosowano odporny na obserwacje odstające, nieparametryczny test sumy rang Wilcoxona.
+
 ### Kluczowe wnioski z analizy:
+
 -   **Istotność statystyczna:** Wynik testu ($p < 2.2e^{-16}$) jednoznacznie potwierdza, że różnica cen między autami nowymi a używanymi jest wysoce istotna statystycznie. Nie jest to wynik przypadkowy – stan pojazdu jest kluczowym czynnikiem różnicującym cenę.
+
 -   **Siła efektu (Effect Size):** Wartość siły efektu wynosząca 0.46 interpretowana jest jako umiarkowana (moderate). Może to wydawać się sprzeczne z intuicją, która podpowiada "ogromną" przepaść cenową między salonem a komisem. Umiarkowany wynik wynika jednak ze specyfiki rynku:
+
   -   **Nakładanie się segmentów:** Kategoria "Używane" jest bardzo szeroka – zawiera zarówno tanie auta miejskie, jak i roczne limuzyny premium, które są wciąż droższe niż wiele fabrycznie nowych aut marek budżetowych.
+  
   -   **Zróżnicowanie grupy "Nowe":** Obejmuje ona pełne spektrum, od najtańszych modeli miejskich po luksusowe super-samochody.
+  
 -   **Struktura rynku:** Analiza liczebności grup ($n_{new} \approx 25\ tys.$ vs $n_{used} \approx 183\ tys.$) pokazuje wyraźną dominację rynku wtórnego w analizowanym zbiorze danych. Oferty aut używanych stanowią blisko 88% wszystkich ogłoszeń, co potwierdza, że polski rynek motoryzacyjny opiera się głównie na obrocie pojazdami z drugiej ręki.
 
 ```{r echo=FALSE}
@@ -796,12 +803,19 @@ nonparametric_test <- function(data, response, group) {
 ```
 
 ## Wpływ rodzaju skrzyni biegów na cenę pojazdu
+
 Kolejnym kluczowym czynnikiem różnicującym wartość rynkową pojazdu jest rodzaj przeniesienia napędu. Aby sprawdzić, jak silna jest dysproporcja cenowa między samochodami z automatyczną a manualną skrzynią biegów, przeprowadzono test sumy rang Wilcoxona. Wybór testu nieparametrycznego podyktowany jest silną asymetrią rozkładu cen.
+
 ### Kluczowe wnioski z analizy:
+
 -   **Istotność statystyczna:** Wynik testu ($p < 2.2e^{-16}$) potwierdza, że rodzaj skrzyni biegów ma fundamentalne znaczenie dla ceny pojazdu. Różnica w cenach ofertowych obu grup jest wysoce istotna statystycznie.
+
 -   **Siła efektu (Effect Size):** Wskaźnik siły efektu wynosi 0.54, co klasyfikuje tę zależność jako dużą (large). Jest to wynik wyższy niż w przypadku porównania aut nowych i używanych (gdzie siła efektu była umiarkowana). Oznacza to, że skrzynia biegów jest jednym z najsilniejszych predyktorów wysokiej ceny. Wynika to z faktu, że:
+
   -   **Automatyczna skrzynia biegów** jest standardem w segmencie Premium, SUV-ach oraz autach luksusowych, które naturalnie są droższe.
-  -   Manualne skrzynie biegów dominują w starszych rocznikach, autach miejskich oraz w podstawowych wersjach wyposażenia.
+  
+  -   **Manualne skrzynie biegów** dominują w starszych rocznikach, autach miejskich oraz w podstawowych wersjach wyposażenia.
+  
 -   **Struktura rynku:** Mimo rosnącej popularności "automatów", polski rynek wtórny wciąż jest silnie nasycony autami z manualną przekładnią. W badanej próbie skrzynie manualne stanowią blisko 64% ofert ($n \approx 133\ tys.$) w porównaniu do 36% automatów ($n \approx 75\ tys.$). Taka struktura podaży sprawia, że automat jest cechą pożądaną i wyraźnie podnoszącą prestiż oraz cenę oferty.
 
 ```{r echo=FALSE}
@@ -809,27 +823,42 @@ nonparametric_test(Car_sale_ads_cleaned_drive_transmission_imputed, "PricePLN", 
 ```
 
 ## Wpływ stanu pojazdu na cenę
+
 Podstawowym kryterium podziału rynku motoryzacyjnego jest stan pojazdu. Aby zweryfikować hipotezę o istotnej statystycznie różnicy cen między samochodami nowymi a używanymi, przeprowadzono nieparametryczny test sumy rang Wilcoxona. Wybór tego testu, zamiast klasycznego testu t-Studenta, podyktowany jest silną asymetrią rozkładu cen oraz występowaniem licznych obserwacji odstających (aut luksusowych).
+
 ### Kluczowe wnioski z analizy:
+
 -   **Istotność statystyczna:** Wynik testu ($p < 2.2e^{-16}$) jednoznacznie wskazuje, że różnica w rozkładach cen dla aut nowych i używanych jest wysoce istotna statystycznie. Odrzucamy hipotezę zerową o równości rozkładów.
+
 -   **Siła efektu (Effect Size):** Obliczona miara siły efektu wynosi 0.46, co interpretujemy jako efekt umiarkowany (moderate). Choć intuicja sugeruje "przepaść" cenową między salonem a komisem, statystyka pokazuje bardziej zniuansowany obraz. Wynika to z faktu, że zbiory te cenowo na siebie zachodzą:
+
   -   **Segment aut używanych** zawiera drogie, luksusowe modele (często roczne lub dwuletnie), których cena przewyższa wartość wielu fabrycznie nowych aut z segmentu budżetowego.
+  
   -   **Szeroka definicja "Nowe"** obejmuje zarówno tanie auta miejskie, jak i super-samochody.
--   Struktura rynku: Analiza liczebności grup ujawnia ogromną dysproporcję w podaży. W badanej próbie zidentyfikowano 25 454 ofert aut nowych oraz aż 182 850 aut używanych. Rynek wtórny dominuje, stanowiąc niemal 88% wszystkich analizowanych ogłoszeń.
+  
+-   **Struktura rynku:** Analiza liczebności grup ujawnia ogromną dysproporcję w podaży. W badanej próbie zidentyfikowano 25 454 ofert aut nowych oraz aż 182 850 aut używanych. Rynek wtórny dominuje, stanowiąc niemal 88% wszystkich analizowanych ogłoszeń.
 
 ```{r echo=FALSE}
 nonparametric_test(Car_sale_ads_cleaned_drive_transmission_imputed, "PricePLN", "Condition")
 ```
 
 ## Wpływ rodzaju paliwa na cenę pojazdu
+
 Rodzaj napędu to jeden z kluczowych parametrów decyzyjnych przy zakupie samochodu, wpływający zarówno na cenę zakupu, jak i późniejsze koszty eksploatacji. Ponieważ analizowana zmienna Fuel_type posiada więcej niż dwa poziomy (m.in. Benzyna, Diesel, Hybryda, Elektryk, LPG), zastosowano test Kruskala-Wallisa.
+
 ### Kluczowe wnioski z analizy:
+
 -   **Istotność statystyczna:** Wynik testu ($p < 2.2e^{-16}$) potwierdza, że rodzaj paliwa istotnie różnicuje ceny samochodów na polskim rynku. Nie jest to zaskoczeniem – technologia napędu jest ściśle powiązana z wiekiem konstrukcji i pozycjonowaniem rynkowym auta.
+
 -   **Siła efektu (Effect Size):** Wskaźnik $\eta^2$ (eta-squared) wynosi 0.062, co interpretujemy jako efekt umiarkowany (moderate).
+
   -   **Mimo wyraźnych różnic cenowych** między np. autami elektrycznymi a spalinowymi, ogólna siła efektu jest łagodzona przez ogromne zróżnicowanie wewnątrz grup "Diesel" i "Benzyna". Kategorie te obejmują zarówno tanie, 20-letnie pojazdy, jak i nowe auta klasy premium, co zwiększa wariancję wewnątrzrupową.
--   Struktura rynku i różnice międzygrupowe (Post-hoc):
+-   **Struktura rynku i różnice międzygrupowe (Post-hoc):**
+
   -   **Dominacja napędów konwencjonalnych:** Rynek jest zdominowany przez silniki benzynowe ($n \approx 99\ tys.$) oraz Diesla ($n \approx 92\ tys.$). Stanowią one łącznie ponad 90% ofert.
+  
   -   **Premiumizacja alternatyw:** Analiza post-hoc (test Dunna) wykazuje bardzo silne, istotne statystycznie różnice między napędami tradycyjnymi a nowoczesnymi. Hybrydy ($n \approx 5.8\ tys.$) oraz auta elektryczne ($n \approx 1.5\ tys.$) są grupami wyraźnie droższymi od średniej rynkowej.
+  
   -   **Nisze rynkowe:** Paliwa takie jak Etanol czy Wodór stanowią margines błędu statystycznego (pojedyncze sztuki), przez co różnice w ich przypadku są nieistotne statystycznie ($ns$).
 
 ```{r echo=FALSE}
@@ -837,15 +866,25 @@ nonparametric_test(Car_sale_ads_cleaned_drive_transmission_imputed, "PricePLN", 
 ```
 
 ## Wpływ rodzaju napędu na cenę pojazdu
+
 Sposób przeniesienia napędu determinuje nie tylko właściwości jezdne, ale także pozycjonowanie rynkowe samochodu (auto miejskie vs. terenowe vs. sportowe). Ze względu na wielokategorialny charakter zmiennej Drive (5 poziomów, m.in. napęd na przód, tył, różne warianty 4x4), zastosowano test Kruskala-Wallisa.
+
 ### Kluczowe wnioski z analizy:
+
 -   **Istotność statystyczna:** Wynik testu ($p < 2.2e^{-16}$) jednoznacznie wskazuje, że rodzaj napędu jest czynnikiem drastycznie różnicującym ceny ofertowe.
+
 -   **Siła efektu (Effect Size):** Wskaźnik $\eta^2$ wynosi 0.146, co klasyfikuje tę zależność jako dużą (large).
+
   -   **Jest to wynik znacząco wyższy** niż w przypadku rodzaju paliwa ($\eta^2 \approx 0.06$). Oznacza to, że informacja o tym, czy auto ma napęd 4x4, czy na przednią oś, mówi nam o jego cenie znacznie więcej, niż to, czy jest to Diesel, czy benzyna.
+  
   -   **Wysoka siła efektu** wynika z wyraźnego podziału rynku: napęd na przód jest domeną aut tanich, natomiast napędy 4x4 oraz RWD (tylny) są standardem w drogich segmentach Premium i SUV.
+  
 -   **Struktura rynku i różnice międzygrupowe (Post-hoc):**
+
   -   **Dominacja FWD:** Rynek jest absolutnie zdominowany przez napęd na przednią oś ("Front wheels"), który posiada aż 151 312 pojazdów w próbie (ok. 72% rynku). Jest to rozwiązanie najtańsze w produkcji i eksploatacji.
+  
   -   **Premiumizacja pozostałych napędów:** Analiza post-hoc (test Dunna) pokazuje, że "Front wheels" różni się istotnie statystycznie od wszystkich pozostałych typów napędu (p < 0.0001).
+  
   -   **Różnorodność 4x4:** Wyróżniamy istotne różnice nawet w obrębie napędów na cztery koła. Napęd stały ("4x4 permanent", $n \approx 18\ tys.$) oraz dołączany automatycznie ($n \approx 16\ tys.$) to rozwiązania popularne i droższe, podczas gdy napęd dołączany ręcznie ($n \approx 3\ tys.$) stanowi niszowy relikt aut typowo terenowych.
 
 ```{r echo=FALSE}
@@ -853,15 +892,25 @@ nonparametric_test(Car_sale_ads_cleaned_drive_transmission_imputed, "PricePLN", 
 ```
 
 ## Wpływ rodzaju napędu na cenę pojazdu
+
 Typ nadwozia (segment) jest fundamentalną cechą samochodu, definiującą jego przeznaczenie, praktyczność oraz prestiż. Ze względu na występowanie aż 9 różnych kategorii (od aut miejskich po SUV-y), do weryfikacji różnic cenowych wykorzystano test Kruskala-Wallisa.
+
 ### Kluczowe wnioski z analizy:
+
 -   **Istotność statystyczna:** Wynik testu ($p < 2.2e^{-16}$) jednoznacznie potwierdza, że typ nadwozia jest kluczowym czynnikiem różnicującym ceny na rynku wtórnym.
+
 -   **Siła efektu (Effect Size):** Wskaźnik $\eta^2$ wynosi 0.218, co oznacza efekt duży (large).
+
   -   **Jest to najwyższy wynik** spośród wszystkich analizowanych dotychczas zmiennych kategorycznych (dla porównania: Rodzaj napędu $\eta^2 \approx 0.146$, Rodzaj paliwa $\eta^2 \approx 0.062$).
+  
   -   **Oznacza to, że typ nadwozia** wyjaśnia blisko 22% zmienności cen w rangach. Wiedząc, czy auto jest SUV-em, czy autem miejskim, możemy znacznie precyzyjniej oszacować jego wartość niż znając tylko rodzaj paliwa.
+  
 -   **Struktura rynku i segmentacja:**
+
   -   **Dominacja SUV-ów:** Najliczniejszą grupą w badanej próbie są SUV-y ($n \approx 41.5\ tys.$). Ich popularność w połączeniu z wysokimi cenami sprawia, że ten segment "ciągnie" średnią rynkową w górę.
+  
   -   **Popularność aut rodzinnych:** Tuż za SUV-ami plasują się auta typu Kombi (Station wagon, $n \approx 40\ tys.$), co pokazuje, że polski rynek wtórny w dużej mierze zaspokaja potrzeby rodzin szukających aut praktycznych.
+  
   -   **Wyraźna hierarchia cenowa:** Analiza post-hoc (test Dunna) wykazuje istotne statystycznie różnice dla niemal wszystkich par porównań (p < 0.0001 dla większości zestawień). Rynek jest wyraźnie rozwarstwiony – "City cars" (auta miejskie) stanowią zupełnie inną kategorię cenową niż "Coupe" czy "Convertible" (kabriolety), które są segmentami niszowymi i droższymi.
   
 ```{r echo=FALSE}
@@ -870,19 +919,33 @@ nonparametric_test(Car_sale_ads_cleaned_drive_transmission_imputed, "PricePLN", 
 
 ## Analiza korelacji: Co najsilniej wpływa na cenę?
 Aby zbadać siłę i kierunek zależności między ceną a zmiennymi numerycznymi (Przebieg, Moc, Pojemność, Rok produkcji), zastosowano współczynnik korelacji rang Spearmana. Wybór metody rangowej, a nie liniowej korelacji Pearsona, jest kluczowy, ponieważ relacje te rzadko są idealnie liniowe (np. utrata wartości auta jest szybsza w pierwszych latach), a w danych występują obserwacje odstające.
+
 ### Kluczowe wnioski z macierzy korelacji:
+
 -   **Rok produkcji ($rho = 0.83$, Bardzo silna korelacja dodatnia):**
+
   -   **Jest to najsilniejszy predyktor ceny w całym zbiorze danych.**
+  
   -   **Wartość bliska 1.0** potwierdza oczywistą, ale fundamentalną zasadę rynku: wiek pojazdu jest głównym czynnikiem deprecjacji. Im nowsze auto, tym wyższa cena, a siła tej zależności dominuje nad pozostałymi czynnikami.
+  
 -   **Przebieg ($rho = -0.67$, Silna korelacja ujemna):**
+
   -   **Znak minus oznacza odwrotną zależność:** im wyższy przebieg, tym niższa cena.
+  
   -   **Przebieg jest rynkowym miernikiem "zużycia" pojazdu.** Wynik -0.67 wskazuje, że klienci bardzo wrażliwie reagują na wskazania licznika. Jest to drugi najważniejszy czynnik cenotwórczy. Warto zauważyć, że przebieg jest silnie skorelowany z rocznikiem, co wzmacnia ten efekt.
+  
 -   **Moc silnika ($rho = 0.57$, Umiarkowana korelacja dodatnia):**
+
   -   **Mocniejszy silnik oznacza wyższą cenę.**
+  
   -   **Zależność jest wyraźna, ale słabsza niż w przypadku rocznika.** Wynika to z faktu, że na rynku istnieją zarówno drogie auta o umiarkowanej mocy (np. nowoczesne hybrydy), jak i tanie, starsze auta o dużej mocy, które straciły już na wartości. Mimo to, w obrębie tego samego rocznika, moc jest wyznacznikiem wersji wyposażenia i prestiżu.
+  
 -   **Pojemność skokowa ($rho = 0.24$, Słaba korelacja dodatnia):**
+
   -   **To najciekawszy, nieoczywisty wniosek.** Korelacja jest niska, co wynika ze zjawiska downsizingu.
+  
   -   **Współczesne, drogie samochody** często mają małe silniki (np. 1.5L lub 2.0L) wspomagane turbosprężarkami, generujące dużą moc. Z kolei starsze, tańsze modele często posiadają silniki o dużej pojemności, ale niskiej wartości rynkowej. Dlatego pojemność skokowa przestała być dobrym wyznacznikiem luksusu czy ceny.
+  
 **Wartość samochodu na polskim rynku wtórnym** jest determinowana przede wszystkim przez jego wiek oraz przebieg. Parametry techniczne, takie jak moc, mają znaczenie drugoplanowe, a pojemność silnika w dobie nowoczesnej motoryzacji traci na znaczeniu jako wyznacznik wartości.
 
 ```{r echo=FALSE}
@@ -898,14 +961,22 @@ Car_sale_ads_cleaned_drive_transmission_imputed <- Car_sale_ads_cleaned_drive_tr
 ```
 
 ## Modelowanie ceny pojazdu: Regresja wieloraka
+
 W celu ilościowego oszacowania wpływu poszczególnych cech na cenę końcową, zbudowano model regresji liniowej. Zmienną objaśnianą jest logarytm ceny (logPrice), co pozwala na interpretację wyników w kategoriach procentowych zmian wartości i lepiej oddaje nieliniowy charakter cen na rynku motoryzacyjnym.
 Jakość dopasowania modelu:Model charakteryzuje się wysokim współczynnikiem determinacji $R^2 = 0.73$. Oznacza to, że wybrane zmienne (Rocznik, Przebieg, Moc, Paliwo, Skrzynia, Stan) wyjaśniają aż 73% zmienności cen na polskim rynku wtórnym. Jest to wynik bardzo satysfakcjonujący, biorąc pod uwagę różnorodność ofert.
+
 ### Kluczowe wnioski (Interpretacja współczynników):
+
 -   **Dominacja rocznika (Production_year):** Współczynnik wynosi 0.073. Oznacza to, że ceteris paribus (przy ustalonych pozostałych parametrach), każdy kolejny rok produkcji (auto młodsze o rok) podnosi cenę średnio o ok. 7.3%. Jest to najsilniejszy czynnik wpływający na wartość.
+
 -   **Moc silnika (Power_HP):** Każdy dodatkowy koń mechaniczny (1 KM) przekłada się na wzrost ceny o ok. 0.5%. Choć jednostkowo to niewiele, różnica 100 KM generuje już znaczącą premię cenową (ok. 50%).
+
 -   **Rodzaj napędu (Baza: Diesel):** Model potwierdza "premię za ekologię". Samochody Hybrydowe są średnio o ok. 17.5% droższe od Diesli ($e^{0.16} - 1$), a Elektryczne o ok. 11%.Z kolei auta z instalacją LPG są wyceniane najniżej (spadek o ok. 24% względem Diesla), co potwierdza ich budżetowy charakter.
+
 -   **Skrzynia biegów (TransmissionManual):** Ujemny współczynnik (-0.366) wskazuje na ogromną różnicę w wycenie. Manualna skrzynia biegów obniża wartość pojazdu o ok. 30% w porównaniu do automatu (przy tych samych parametrach rocznika i mocy).
+
 -   **Stan pojazdu (ConditionUsed):** Współczynnik -0.552 to matematyczny dowód na "efekt wyjazdu z salonu". Samochód używany jest średnio o ok. 42% tańszy od swojego nowego odpowiednika (przy uwzględnieniu korekty na rocznik w ramach modelu).
+
 -   **Paradoks przebiegu (Mileage_km):** Współczynnik przy przebiegu jest statystycznie istotny, ale bliski zeru i dodatni ($3.03 \times 10^{-9}$). Jest to efekt pozorny, wynikający z silnej korelacji przebiegu z rocznikiem (nowsze auta mają mniejszy przebieg). W tym modelu "ciężar" wyjaśniania spadku wartości przejął niemal w całości Rocznik, czyniąc zmienną przebiegu drugoplanową w ujęciu wielowymiarowym.
 
 ```{r echo=FALSE}
@@ -919,15 +990,25 @@ summary(model)
 ```
 
 ## Diagnostyka modelu: Weryfikacja założeń i współliniowości
+
 Aby potwierdzić wiarygodność oszacowanych współczynników oraz sprawdzić, czy model spełnia założenia klasycznej metody najmniejszych kwadratów, przeprowadzono analizę diagnostyczną obejmującą test współliniowości (VIF) oraz analizę wizualną reszt.
+
 -   **Analiza współliniowości (VIF - Variance Inflation Factor):** Pierwszym krokiem było sprawdzenie, czy zmienne objaśniające nie są ze sobą zbyt silnie skorelowane (np. czy rocznik nie dubluje informacji o przebiegu w sposób uniemożliwiający obliczenia).
+
   -   **Wszystkie wartości GVIF (Generalized VIF)** dla zmiennych w modelu mieszczą się w przedziale 1.3 – 1.6.
+  
   -   **Jest to wynik bardzo dobry.** W statystyce przyjmuje się, że wartości powyżej 5 lub 10 świadczą o szkodliwej współliniowości.
+  
   -   **Wniosek: Mimo że rocznik i przebieg są ze sobą skorelowane** (jak wykazała wcześniejsza analiza korelacji Spearmana), w kontekście wielowymiarowym każda z tych zmiennych wnosi unikalną informację. Współczynniki modelu są stabilne i można je interpretować niezależnie.
+  
 -   **Analiza reszt (Wykresy diagnostyczne):** Wizualna ocena wykresów diagnostycznych ujawnia pewne ograniczenia modelu, typowe dla danych rzeczywistych o tak dużej liczebności ($N > 200\ tys.$):
+
   -   **Residuals vs Fitted (Lewy górny):** Widoczna jest pewna struktura (lekki kształt lejka/krzywej), co sugeruje, że zależność nie jest idealnie liniowa nawet po zlogarytmowaniu ceny. Może to oznaczać występowanie heteroskedastyczności – błąd predykcji modelu zmienia się wraz z ceną auta (model myli się bardziej przy autach drogich).
+  
   -   **Normal Q-Q (Prawy górny):** Punkty układają się na linii przerywanej w środkowej części, ale wyraźnie odchylają się na krańcach ("ciężkie ogony"). Oznacza to, że rozkład reszt nie jest idealnie normalny. Model ma trudności z dokładnym oszacowaniem cen dla ofert skrajnych – bardzo tanich "wraków" lub unikatowych egzemplarzy luksusowych.
+  
   -   **Scale-Location (Lewy dolny):** Rosnąca czerwona linia potwierdza wspomnianą heteroskedastyczność. Wariancja błędów rośnie wraz ze wzrostem wartości przewidywanej.
+  
   -   **Residuals vs Leverage (Prawy dolny):** Wykres nie wskazuje na istnienie pojedynczych punktów o krytycznym wpływie na model (brak punktów przekraczających dystans Cooka w stopniu alarmującym).
 
 ```{r echo=FALSE}

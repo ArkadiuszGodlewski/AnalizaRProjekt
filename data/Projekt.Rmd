@@ -16,6 +16,10 @@ library(ggpubr)
 library(coin)
 ```
 
+### Przewalutowanie i przygotowanie kolumny ceny
+
+W celu ujednolicenia waluty, dokonaliśmy przewalutowania ofert wystawionych w innych walutach na PLN, przyjmując stały kurs wymiany. Nowa kolumna `PricePLN` została umieszczona bezpośrednio obok ceny oryginalnej, aby ułatwić weryfikację poprawności obliczeń.
+
 ```{r}
 #Przewalutowanie
 Car_sale_ads_cleaned_drive_transmission_imputed <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
@@ -37,6 +41,15 @@ df_brand <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
   arrange(desc(n)) %>%
   slice_head(n = 20)
 ```
+
+## TOP 20 najpopularniejszych marek samochodów
+
+Poniższe zestawienie przedstawia marki, które najczęściej pojawiają się w ogłoszeniach. Pozwala to określić, jakie samochody dominują na polskim rynku wtórnym.
+
+### Kluczowe obserwacje:
+
+-   **Liderzy rynku:** Wyraźnie widać dominację marek niemieckich (VW, BMW, Audi).
+-   **Udział procentowy:** Pierwszą piątkę zestawienia otwierają wyłącznie producenci z Niemiec: Volkswagen (8.9%), BMW (8.2%), Audi (8%), Opel (7.8%) oraz Ford (7.7%).Marki z końca zestawienia (np. Fiat, Seat, Nissan) mają zbliżone do siebie udziały, co świadczy o dużej różnorodności ofert poza ścisłą czołówką.
 
 ```{r}
 ggplot(df_brand, aes(x = reorder(Vehicle_brand, n), y = n, fill = n)) +
@@ -71,6 +84,10 @@ df_model <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
   slice_head(n = 20)
 ```
 
+## TOP 20 najpopularniejszych modeli samochodów
+
+Poniższe zestawienie przedstawia modele samochodów, które najczęściej pojawiają się w ogłoszeniach. Pozwala to określić, jakie konkretne pojazdy dominują na polskim rynku wtórnym. Bezsprzecznym liderem jest Opel Astra, który stanowi 2.5% wszystkich ogłoszeń (ponad 5000 ofert).Modele takie jak Audi A4 (2.2%) oraz BMW Seria 3 (2.2%) wyprzedzają popularne auta miejskie, co potwierdza trend widoczny w rankingu marek. Volkswagen Golf (2%) oraz Passat (1.9%), wraz ze Skodą Octavią (1.9%), stanowią trzon ofert, co jest typowe dla polskiego rynku wtórnego.Ford Fiesta i Skoda Superb zamykają stawkę TOP 20 z udziałem poniżej 1%, co pokazuje, że rynek jest nasycony głównie autami kompaktowymi i segmentem D.
+
 ```{r}
 ggplot(df_model, aes(x = reorder(Brand_Model, n), y = n, fill = n)) +
   geom_col() +
@@ -94,6 +111,10 @@ ggplot(df_model, aes(x = reorder(Brand_Model, n), y = n, fill = n)) +
   ) +
   expand_limits(y = max(df_model$n) * 1.15)
 ```
+
+## Liczba ogłoszeń ze względu na cenę (PLN)
+
+Powyższy wykres przedstawia rozkład liczby ogłoszeń w zależności od przedziału cenowego. Najwięcej ofert znajduje się w przedziale do 20000 złotych, co wskazuje na popularność samochodów używanych w niskim segmencie cenowym. Ponad 54% ogłoszeń stanowią samochody wystawione za mniej niż 40 000 złotych. W miarę wzrostu ceny liczba ogłoszeń maleje, co jest typowe dla rynku motoryzacyjnego, gdzie droższe pojazdy są mniej powszechne.
 
 ```{r}
 df_bins <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
@@ -137,6 +158,10 @@ ggplot(df_bins, aes(x = Price_bin, y = N, fill = percent)) +
   )
 ```
 
+## Rozkład cen najpopularniejszych samochodów marek japońskich
+
+Poniższy wykres przedstawia porównanie cen ofert sprzedaży samochodów marek Suzuki i Honda. Analiza opiera się na wszystkich ogłoszeniach samochdów Honda i Suzuki z bazy danych. Wykres ilustruje rozrzut cen (w PLN) dla obu marek, umożliwiając ocenę różnic w cenach oferowanych pojazdów. Honda charakteryzuje się wyższą średnią ceną ofertową (43 622,66 PLN) w porównaniu do Suzuki (41 231,77 PLN). Wartość p = 0.00763 jest mniejsza niż standardowy próg 0.05. Oznacza to, że różnica w cenach między tymi markami jest istotna statystycznie.Suzuki wykazuje więcej wartości odstających w bardzo wysokich przedziałach cenowych (powyżej 200 tys. PLN), co może sugerować obecność nowszych lub specjalistycznych modeli w ofercie.
+
 ```{r}
 #Mediana
 Car_sale_ads_cleaned_drive_transmission_imputed %>%
@@ -152,6 +177,20 @@ Car_sale_ads_cleaned_drive_transmission_imputed %>%
     labels = function(x) format(x, big.mark = " ", scientific = FALSE)
   )
 ```
+
+## Analiza porównawcza cen marek japońskich: Honda vs Suzuki
+
+Poniższa analiza skupia się na porównaniu rozkładu cen ofertowych dla dwóch popularnych marek japońskich: Hondy oraz Suzuki, na podstawie losowej próby 3000 ogłoszeń.
+
+**Wnioski z analizy wizualnej i statystycznej:**
+
+-   Średnie ceny ofertowe: Wyraźnie widać różnicę w średnim poziomie cenowym. Samochody marki Honda są średnio droższe, z ceną wynoszącą 43 546,30 PLN, podczas gdy średnia cena dla marki Suzuki to 40 261,85 PLN.
+
+-   **Charakterystyka rozkładu (Wykres skrzypcowy):**
+
+    -   W przypadku obu marek największa koncentracja ofert (najszersza część "skrzypiec") znajduje się w dolnych przedziałach cenowych, co sugeruje dominację aut używanych w wieku kilku/kilkunastu lat.
+
+    -   Honda posiada bardziej "rozciągnięty" kształt w górę, co świadczy o większej liczbie ofert w przedziale 50 000 – 150 000 PLN.
 
 ```{r}
 #Próba
@@ -176,6 +215,11 @@ Car_sale_ads_cleaned_drive_transmission_imputed %>%
     caption = "Wykres przedstawia rozrzut cen (PLN) dla 3000 losowo wybranych ogłoszeń"
   )
 ```
+
+## Rozkład cen najpopularniejszych samochodów marek niemieckich
+
+Poniższa analiza skupia się na porównaniu rozkładu cen ofertowych dla trzech popularnych marek niemieckich: **BMW, Audi oraz Volkswagen** na podstawie losowej próby 3000 ogłoszeń. Najwyższą średnią ceną charakteryzuje się marka BMW, osiągając poziom 106 000 PLN. Audi plasuje się na drugim miejscu ze średnią 93 290,17 PLN.Volkswagen jest marką najtańszą w tym zestawieniu, ze średnią ceną 56 983,47 PLN, co niemal dwukrotnie odbiega od lidera (BMW).Zastosowane poprawki Holma wykazały, że wszystkie różnice między markami są istotne statystycznie.Wykresy marek Audi i BMW wykazują bardzo długie "ogony" w górnych przedziałach cenowych, z licznymi ofertami przekraczającymi 500 000 PLN, a w przypadku BMW zbliżającymi się nawet do 850 000 PLN. Świadczy to o dużej obecności samochodów niemal nowych, luksusowych lub sportowych.Volkswagen ma znacznie bardziej skoncentrowany rozkład – większość ofert skupia się poniżej 150 000 PLN, a wartości odstające rzadko przekraczają próg 300 000 PLN.Największa gęstość ofert (najszersze miejsce skrzypiec) dla wszystkich marek znajduje się w dolnej części skali, co potwierdza, że trzonem rynku są auta używane w niższych przedziałach cenowych.
+
 ```{r}
 #Próba
 set.seed(223)
@@ -199,6 +243,11 @@ Car_sale_ads_cleaned_drive_transmission_imputed %>%
     caption = "Wykres przedstawia rozrzut cen (PLN) dla 3000 losowo wybranych ogłoszeń"
   )
 ```
+
+## Rozkład cen najpopularniejszych samochodów marek włoskich
+
+Poniższa analiza skupia się na porównaniu rozkładu cen ofertowych dla dwóch popularnych marek włoskich: **Ferrari i Lamborghini** na podstawie losowej ppopulacji składającej się z 84 ogłoszeń.Średnia cena ofertowa dla marki Ferrari wynosi 740 000 PLN, podczas gdy dla Lamborghini jest to 1 040 000 PLN. Różnica ta wskazuje, że Lamborghini plasuje się wyżej w segmencie luksusowych samochodów sportowych.Zastosowane poprawki Holma wykazały, że różnica między cenami obu marek jest istotna statystycznie.Wykresy obu marek wykazują bardzo długie "ogony" w górnych przedziałach cenowych, z licznymi ofertami przekraczającymi 1 500 000 PLN. Świadczy to o dużej obecności samochodów luksusowych lub sportowych.Największa gęstość ofert (najszersze miejsce skrzypiec) dla obu marek znajduje się w wyższej części skali cenowej, co potwierdza, że rynek tych samochodów koncentruje się wokół segmentu premium.
+
 ```{r}
 #Próba
 set.seed(123)
@@ -222,6 +271,10 @@ Car_sale_ads_cleaned_drive_transmission_imputed %>%
     caption = "Wykres przedstawia rozrzut cen (PLN) dla wszystkich ogłoszeń z badanego okresu"
   )
 ```
+
+## Struktura ogłoszeń według różnych cech pojazdów
+
+Dominacja segmentu SUV i Kombi: Te dwa typy nadwozia niemal zrównały się popularnością, stanowiąc łącznie blisko 40% całego rynku (SUV: 20%, Kombi: 19.3%). Potwierdza to silny trend rynkowy w kierunku aut rodzinnych i uniwersalnych. Tradycyjne nadwozia typu Sedan (16%) oraz Kompakt (15.4%) nadal zajmują wysokie miejsca, utrzymując stabilną bazę ofert. Samochody miejskie (11.6%) oraz minivany (10.6%) stanowią istotne uzupełnienie rynku, odpowiadając na potrzeby transportu lokalnego i większych rodzin.Segmenty niszowe: Najmniejszy udział w bazie mają nadwozia o charakterze rekreacyjnym i sportowym: Coupe (3.1%), Małe samochody (2.9%) oraz Kabriolety (1.2%). Mała liczba ogłoszeń w tych kategoriach sugeruje ich hobbystyczny charakter.
 
 ```{r}
 df_type <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
@@ -270,6 +323,7 @@ ggplot(df_type, aes(x = reorder(Type, n), y = n, fill = n)) +
   ) +
   expand_limits(y = max(df_type$n) * 1.15)
 ```
+
 ```{r}
 df_condition <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
   filter(Condition %in% c("New", "Used")) %>%
@@ -280,6 +334,10 @@ df_condition <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
     percent_label = paste0(round(percent * 100, 1), "%")
   )
 ```
+
+## Struktura ogłoszeń według stanu pojazdu
+
+Wykres kołowy przedstawia miażdżącą przewagę jednego z segmentów, co jest typowe dla ogólnodostępnych serwisów ogłoszeniowych.ż 87.8% wszystkich ofert to samochody używane. Potwierdza to, że analizowana baza danych skupia się przede wszystkim na obrocie z drugiej ręki. Samochody nowe stanowią jedynie 12.2% ogłoszeń. Są to zazwyczaj oferty od autoryzowanych dealerów, którzy wykorzystują platformy ogłoszeniowe do wyprzedaży rocznika lub promocji modeli dostępnych "od ręki".
 
 ```{r}
 ggplot(df_condition, aes(x = "", y = N, fill = Condition)) +
@@ -312,57 +370,6 @@ ggplot(df_condition, aes(x = "", y = N, fill = Condition)) +
     plot.title = element_text(hjust = 0.5, face = "bold"),
     plot.subtitle = element_text(hjust = 0.5),
     legend.position = "right"
-  )
-```
-
-```{r}
-df_mileage_bins <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
-  filter(Condition != "New") %>%   # tylko używane
-  mutate(
-    Mileage_trimmed = ifelse(Mileage_km > 300000, 300001, Mileage_km),
-    Mileage_bin = cut(
-      Mileage_trimmed,
-      breaks = c(seq(0, 300000, by = 50000), Inf),
-      labels = c(
-        "0–50k", "50–100k", "100–150k", "150–200k",
-        "200–250k", "250–300k", ">300k"
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) %>%
-  group_by(Mileage_bin) %>%
-  summarise(N = n(), .groups = "drop") %>%
-  mutate(
-    percent = N / sum(N),
-    percent_label = paste0(round(percent * 100, 1), "%")
-  )
-```
-
-```{r}
-ggplot(df_mileage_bins, aes(x = Mileage_bin, y = N, fill = percent)) +
-  geom_col() +
-  geom_text(
-    aes(label = percent_label),
-    vjust = -0.5,
-    size = 4
-  ) +
-  scale_fill_gradient(
-    low = "#6baed6",
-    high = "#08306b",
-    name = "Udział %",
-    labels = scales::percent
-  ) +
-  labs(
-    title = "Liczba ogłoszeń ze względu na przebieg (tylko samochody używane)",
-    x = "Przebieg (km)",
-    y = "Liczba ogłoszeń"
-  ) +
-  theme_minimal(base_size = 14) +
-  theme(
-    plot.title = element_text(hjust = 0.5),
-    legend.position = "right",
-    axis.text.x = element_text(angle = 45, hjust = 1)
   )
 ```
 
@@ -437,6 +444,10 @@ df_fuel_grouped <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
   )
 ```
 
+## Struktura ogłoszeń według rodzaju paliwa
+
+Struktura napędów pokazuje, że tradycyjne silniki spalinowe wciąż nie mają sobie równych. Rynek jest niemal idealnie podzielony między dwa główne rodzaje paliwa. Benzyna (47.7%) posiada minimalną przewagę nad silnikami typu Diesel (44.4%). Pozostałe rodzaje napędów (LPG, hybrydy, auta elektryczne) stanowią zaledwie 7.9% ogłoszeń. Mimo rosnącej świadomości ekologicznej, auta alternatywne wciąż stanowią mniejszość rynkową w porównaniu do klasycznych rozwiązań. Większość kupujących i sprzedających obraca się wokół aut spalinowych, przy czym wybór między benzyną a dieslem zależy prawdopodobnie od wielkości auta (diesle dominują w SUV-ach i kombi, benzyna w kompaktach).
+
 ```{r}
 pie_plot(
   df_fuel_grouped,
@@ -456,6 +467,10 @@ df_transmission <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
   )
 ```
 
+## Struktura ogłoszeń według skrzyni biegów
+
+Wykres kołowy przedstawia strukturę ogłoszeń według rodzaju skrzyni biegów. Dominującą pozycję zajmują samochody z manualną skrzynią biegów, stanowiąc 63.9% wszystkich ofert. To wskazuje na silne przywiązanie rynku do tradycyjnych rozwiązań, które oferują większą kontrolę nad pojazdem i często niższe koszty eksploatacji. Wzrost popularności automatycznych skrzyń biegów (36.1%) jest zauważalny, co może być efektem rosnącej dostępności tego typu napędów w nowych modelach samochodów oraz zmieniających się preferencji kierowców, zwłaszcza w miastach, gdzie automatyka ułatwia jazdę w korkach.
+
 ```{r}
 pie_plot(
   df_transmission,
@@ -464,13 +479,9 @@ pie_plot(
 )
 ```
 
-```{r}
-pie_plot(
-  df_drive_clean,
-  Drive_clean,
-  "Struktura ogłoszeń według napędu"
-)
-```
+## Zależność ceny samochodu od mocy silnika
+
+Poniższy wykres przedstawia zależność ceny samochodu od mocy silnika. Analiza opiera się na danych po usunięciu obserwacji skrajnych, co pozwala lepiej zobrazować typowe relacje między tymi dwoma zmiennymi.Linia trendu wyraźnie pnie się w górę, co potwierdza intuicyjną zależność: wraz ze wzrostem mocy silnika (KM), rośnie cena pojazdu (PLN). Jest to związane nie tylko z kosztem samej jednostki napędowej, ale także z faktem, że duża moc jest domeną samochodów nowszych, wyższych klas lub aut sportowych.Największe zagęszczenie ogłoszeń (najciemniejszy kolor niebieski) występuje w przedziale od 100 do 150 KM przy cenie poniżej 30 000 PLN. To "serce" polskiego rynku wtórnego – samochody kompaktowe i miejskie, które są najbardziej przystępne cenowo. Większość ofert skupia się w zakresie do 200 KM. Powyżej 300 KM liczba ogłoszeń gwałtownie spada (jasnoniebieskie punkty), co oznacza, że są to oferty niszowe, luksusowe lub wyczynowe. Pionowy rozrzut punktów pokazuje, że przy tej samej mocy (np. 150 KM) ceny są bardzo zróżnicowane (od kilku do prawie 100 tys. PLN). Wynika to z innych czynników, których ten wykres nie uwzględnia bezpośrednio, takich jak: rocznik, przebieg czy marka. Moc silnika jest silnym predyktorem ceny. Jeśli szukasz auta o mocy powyżej 200 KM, musisz liczyć się z ceną startową znacznie wyższą niż średnia rynkowa, a dynamika tego wzrostu jest stała w całym badanym zakresie.
 
 ```{r}
 # Przygotowanie danych
@@ -537,7 +548,6 @@ ggplot(dane, aes(x = Power_HP, y = PricePLN)) +
 
 ```
 
-
 ```{r}
 df_power_bins <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
   mutate(
@@ -560,6 +570,10 @@ df_power_bins <- Car_sale_ads_cleaned_drive_transmission_imputed %>%
     percent_label = paste0(round(percent * 100, 1), "%")
   )
 ```
+
+## Liczba ogłoszeń ze względu na moc silnika (KM)
+
+Moc silnika (wyrażona w koniach mechanicznych – KM) jest jednym z najważniejszych czynników determinujących charakter pojazdu oraz jego wartość rynkową. Poniższe zestawienie przedstawia rozkład popularności jednostek napędowych. Serce rynku (100–150 KM): Ponad 41% wszystkich wystawionych pojazdów posiada moc w tym przedziale. Jest to absolutny standard dla współczesnych samochodów kompaktowych i SUV-ów, łączący przyzwoitą dynamikę z ekonomią spalania.Standardowa oferta (50–200 KM): Jeśli rozszerzymy zakres od 50 do 200 KM, okaże się, że obejmuje on ponad 83% całego rynku.Segment aut mocnych i sportowych: Jednostki generujące powyżej 250 KM stanowią rynkową mniejszość (łącznie około 9%). Auta o mocy ekstremalnej (powyżej 500 KM) to zaledwie 0.8% wszystkich ofert.
 
 ```{r}
 ggplot(df_power_bins, aes(x = Power_bin, y = N, fill = percent)) +
@@ -625,6 +639,10 @@ color_map <- c(
 )
 ```
 
+## Najpopularniejsze kolory samochodów
+
+Wybór koloru nadwozia, choć wydaje się kwestią czysto estetyczną, ma istotne znaczenie rynkowe – wpływa na tzw. płynność odsprzedaży oraz utrzymanie wartości pojazdu. Poniższy wykres przedstawia strukturę kolorystyczną badanej bazy ogłoszeń.Polski rynek wtórny jest zdominowany przez "bezpieczne" i klasyczne kolory. Pierwsze cztery miejsca zajmują: Czarny (24.2%), Szary (15.3%), Srebrny (14.8%) oraz Biały (14.6%). Łącznie te cztery barwy stanowią blisko 70% wszystkich ofert.Niemal co czwarty samochód wystawiony na sprzedaż jest koloru czarnego. Jest to kolor kojarzony z elegancją i segmentem premium, co pokrywa się z wysokim udziałem marek takich jak BMW czy Audi w bazie danych.Wśród barw chromatycznych (kolorowych) największą popularnością cieszy się Niebieski (10.4%) oraz Czerwony (4.7%). Pozostałe kolory, takie jak brązowy, zielony czy bordowy, stanowią jedynie marginalny ułamek ofert (poniżej 3% każdy).Dane potwierdzają zachowawczość kupujących i sprzedających. Samochody w kolorach czarnym, szarym i srebrnym są traktowane jako najbardziej uniwersalne, co ułatwia ich późniejszą odsprzedaż. Wyraźna dominacja czerni może również sugerować dużą liczbę aut poflotowych oraz reprezentacyjnych sedanów i SUV-ów w analizowanym zbiorze.
+
 ```{r}
 ggplot(df_colour, aes(x = reorder(Colour_PL, n), y = n, fill = Colour_PL)) +
   geom_col(color = ifelse(df_colour$Colour_PL == "Biały", "black", NA)) + # obramówka dla białego
@@ -648,6 +666,10 @@ ggplot(df_colour, aes(x = reorder(Colour_PL, n), y = n, fill = Colour_PL)) +
   ) +
   expand_limits(y = max(df_colour$n) * 1.15)
 ```
+
+## Procentowy spadek cen: nowe vs używane - najpopularniejsze modele
+
+Wykres przedstawia procentową różnicę w cenie między egzemplarzami nowymi a używanymi dla pięciu najpopularniejszych modeli w bazie. Dane te obrazują, jak drastycznie spada wartość pojazdu po wyjechaniu z salonu i przejściu na rynek wtórny. Największy spadek wartości – Segment Premium: Liderami utraty wartości są modele marek luksusowych. BMW Seria 3 notuje najwyższy spadek, gdzie modele używane są średnio o 87.7% tańsze od nowych. Tuż za nim plasuje się Audi A4 ze spadkiem na poziomie 83.2%. Wynika to z faktu, że auta premium bardzo szybko tracą na wartości w pierwszych latach eksploatacji, a koszty ich serwisowania na rynku wtórnym są wysokie. Modele marek masowych wykazują nieco większą odporność na utratę wartości w porównaniu do segmentu premium. Volkswagen Golf (78.6%) oraz Volkswagen Passat (74.7%) plasują się w środku stawki.W tym zestawieniu Opel Astra notuje najniższą różnicę (69.7%). Oznacza to, że używane Astry zachowują relatywnie najwyższy procent ceny nowego auta spośród analizowanej piątki, co może wynikać z ich ogromnej popularności w flotach i wysokiego popytu na tanie w utrzymaniu auta kompaktowe. Dla potencjalnego nabywcy wykres ten jest jasnym sygnałem: zakup rocznego lub kilkuletniego auta segmentu premium (BMW, Audi) pozwala na zaoszczędzenie ogromnej części kwoty początkowej w porównaniu do zakupu w salonie. Jednocześnie potwierdza to tezę, że samochody są aktywami tracącymi na wartości najszybciej w początkowej fazie użytkowania.
 
 ```{r}
 # Procentowy spadek cen: nowe vs używane

@@ -18,7 +18,7 @@ download.file("https://raw.githubusercontent.com/ArkadiuszGodlewski/AnalizaRProj
 Car_sale_ads_cleaned_drive_transmission_imputed <- read_rds("Car_sale_ads_cleaned_drive_transmission_imputed.rds")
 ```
 
-### Przewalutowanie i przygotowanie kolumny ceny
+## Przewalutowanie i przygotowanie kolumny ceny
 
 W celu ujednolicenia waluty, dokonaliśmy przewalutowania ofert wystawionych w innych walutach na PLN, przyjmując stały kurs wymiany. Nowa kolumna `PricePLN` została umieszczona bezpośrednio obok ceny oryginalnej, aby ułatwić weryfikację poprawności obliczeń.
 

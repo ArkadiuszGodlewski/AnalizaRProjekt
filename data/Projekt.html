@@ -353,8 +353,45 @@ display: none;
 </div>
 
 
-<div id="przewalutowanie-i-przygotowanie-kolumny-ceny" class="section level3">
-<h3>Przewalutowanie i przygotowanie kolumny ceny</h3>
+<div id="wstęp" class="section level2">
+<h2>Wstęp</h2>
+<p>Rynek samochodów używanych w Polsce charakteryzuje się ogromną
+dynamiką i różnorodnością. Wybór odpowiedniego pojazdu to proces
+wieloetapowy, w którym cena końcowa jest wypadkową nie tylko stanu
+technicznego, ale także marki, prestiżu oraz trendów rynkowych.
+Niniejszy projekt ma na celu kompleksową analizę struktury polskiego
+rynku wtórnego na podstawie obszernego zbioru ogłoszeń motoryzacyjnych.
+W ramach pracy dokonano analizy popularności poszczególnych marek i
+modeli, zbadano rozkłady cenowe w różnych segmentach (od aut miejskich
+po luksusowe marki włoskie) oraz zweryfikowano statystycznie wpływ
+kluczowych parametrów technicznych na wartość pojazdu. Projekt łączy w
+sobie elementy statystyki opisowej, testowania hipotez
+nieparametrycznych oraz modelowania ekonometrycznego.</p>
+</div>
+<div id="pytania-badawcze" class="section level2">
+<h2>Pytania badawcze</h2>
+<p>W trakcie analizy postawiono następujące pytania badawcze, które
+ukierunkowały proces przetwarzania danych:</p>
+<ul>
+<li><p><strong>Struktura rynku:</strong> Jakie marki i modele samochodów
+dominują w polskich ogłoszeniach i jaki jest udział poszczególnych typów
+nadwozia oraz rodzajów paliwa?</p></li>
+<li><p><strong>Determinanty ceny:</strong> Które parametry numeryczne
+(rok produkcji, przebieg, moc silnika, pojemność) wykazują najsilniejszą
+korelację z ceną pojazdu?</p></li>
+<li><p><strong>Wpływ cech jakościowych:</strong> Czy rodzaj skrzyni
+biegów, typ napędu oraz stan pojazdu (nowy/używany) w sposób istotny
+statystycznie różnicują cenę ofertową?</p></li>
+<li><p><strong>Utrata wartości:</strong> Jak drastycznie różnią się ceny
+aut nowych i używanych w przypadku najpopularniejszych modeli na
+rynku?</p></li>
+<li><p><strong>Modelowanie:</strong> W jakim stopniu podstawowe cechy
+pojazdu pozwalają na precyzyjne przewidzenie jego ceny
+rynkowej?</p></li>
+</ul>
+</div>
+<div id="przewalutowanie-i-przygotowanie-kolumny-ceny" class="section level2">
+<h2>Przewalutowanie i przygotowanie kolumny ceny</h2>
 <p>W celu ujednolicenia waluty, dokonaliśmy przewalutowania ofert
 wystawionych w innych walutach na PLN, przyjmując stały kurs wymiany.
 Nowa kolumna <code>PricePLN</code> została umieszczona bezpośrednio obok
@@ -1203,6 +1240,46 @@ alarmującym).</p></li>
 ## Fuel_type       1.599626  7        1.034124
 ## Transmission    1.591660  1        1.261610
 ## Condition       1.316245  1        1.147277</code></pre>
+</div>
+<div id="wnioski" class="section level2">
+<h2>Wnioski</h2>
+<p>Na podstawie przeprowadzonej analizy sformułowano następujące wnioski
+końcowe:</p>
+<ul>
+<li><p><strong>Dominacja segmentu Premium i marek niemieckich:</strong>
+Polski rynek wtórny opiera się na markach niemieckich (VW, BMW, Audi).
+Co ciekawe, mimo że najpopularniejszym modelem jest Opel Astra, to marki
+luksusowe generują największy ruch w górnych przedziałach
+cenowych.</p></li>
+<li><p><strong>Kluczowe czynniki cenotwórcze:</strong> Najważniejszym
+predyktorem wartości samochodu jest jego wiek (rok produkcji), co
+potwierdziła bardzo silna korelacja Spearmana (<span class="math inline">\(rho = 0.83\)</span>). Drugim kluczowym czynnikiem
+jest przebieg, natomiast pojemność silnika straciła na znaczeniu ze
+względu na trend downsizingu.</p></li>
+<li><p><strong>Wpływ skrzyni biegów i napędu:</strong> Rodzaj skrzyni
+biegów okazał się jednym z najsilniejszych czynników różnicujących cenę
+(siła efektu 0.54). Samochody z automatyczną skrzynią biegów są
+wyceniane znacznie wyżej, co wynika z ich dominacji w droższych
+segmentach i rosnącej popularności wśród kierowców.</p></li>
+<li><p><strong>Utrata wartości:</strong> Analiza wykazała ogromny spadek
+wartości aut tuż po wyjeździe z salonu, szczególnie w segmencie premium
+(BMW Seria 3, Audi A4), gdzie różnica między medianą cen aut nowych i
+używanych przekracza 80%.</p></li>
+<li><p><strong>Preferencje estetyczne:</strong> Polacy preferują
+“bezpieczne” kolory – blisko 70% rynku to samochody czarne, szare,
+srebrne i białe, co ułatwia ich późniejszą odsprzedaż.</p></li>
+<li><p><strong>Skuteczność modelu:</strong> Zbudowany model regresji
+wielorakiej wyjaśnia aż 73% zmienności cen (<span class="math inline">\(R^2 = 0.73\)</span>). Potwierdza to, że cena
+samochodu w Polsce nie jest przypadkowa i w dużej mierze zależy od
+obiektywnych cech technicznych, takich jak rok produkcji, moc silnika
+oraz rodzaj skrzyni biegów.</p></li>
+</ul>
+</div>
+<div id="spis-autorów" class="section level2">
+<h2>Spis autorów</h2>
+<p>Autorami projektu są:</p>
+<p><strong>Arkadiusz Godlewski</strong></p>
+<p><strong>Aleksander Adamajt</strong></p>
 </div>
 
 
